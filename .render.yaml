@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: ilovesushi-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ilovesushi-db
+          property: connectionString
+      - key: ALLOWED_ORIGINS
+        value: https://your-frontend-domain.com,http://localhost:3000
+
+databases:
+  - name: ilovesushi-db
+    databaseName: ilovesushi_db
+    user: ilovesushi_user
+    plan: free
+    region: oregon 

@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Menu Items
+model MenuItem {
+  id                     String   @id @default(uuid())
+  nome                   String
+  descricao              String?
+  margem_lucro           Float?
+  ingredientes           Json // Array of {id: string, quantidade: number}
+  total_ingredientes     Float?
+  total_com_precos_fixos Float?
+  total_ifood            Float?
+  total_goomer           Float?
+  tipo                   String? // "individual" | "combo"
+  preco_final_ifood      Float?
+  preco_final_goomer     Float?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("menu_items")
+}
+
+// Ingredients
+model Ingredient {
+  id                String   @id @default(uuid())
+  nome              String
+  categoria         String
+  unidade_medida    String
+  quantidade_total  Float
+  custo_total       Float
+  custo_por_unidade Float
+  fornecedor        String?
+  data_compra       String? // ISO string
+  validade          String? // ISO string
+  descricao         String?
+  custo_adicional   Float?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("ingredients")
+}
+
+// Fixed Prices
+model FixedPrice {
+  id        String   @id
+  value     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("fixed_prices")
+}
+
+// Sales Volume (Singleton)
+model SalesVolume {
+  id        String   @id @default("current")
+  volume    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sales_volume")
+}
+
+// Token (Singleton)
+model Token {
+  id        String   @id @default("current")
+  token     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tokens")
+}
+
+// Health Check (existing)
+model Health {
+  id        String   @id @default(uuid())
+  status    String
+  timestamp DateTime @default(now())
+
+  @@map("health")
+}
